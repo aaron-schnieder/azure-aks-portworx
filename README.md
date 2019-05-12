@@ -10,6 +10,29 @@ Instructions and examples to setup Portworx on Azure AKS with a production ready
 
 <todo: add architecture diagram>
 
+## Steps to Install Portworx on Azure AKS
+
+1. Create and configure Azure AKS infrastructure [see section below](#create-azure-aks-infrastructure)
+2. Generate Portworx spec for your AKS cluster [see section below](#spec-generator)
+3. Install Portworx on your cluster [see section below](#install-portworx-on-aks)
+
+### Azure Infrastructure Recommendations
+
+#### Azure Managed Disks vs Azure Files
+
+<todo: research Azure Disk, single pod access but premium storage, vs Azure Files with multiple pod access but standard storage only>
+
+<todo: research dynamic vs static storage and make recommendation>
+
+https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv
+https://docs.microsoft.com/en-us/azure/aks/azure-disks-dynamic-pv
+
+#### Azure Managed Disk count
+
+<todo: work with Portworx to determine the recommended number of Azure managed disks relative to VMs and datastores>
+
+<todo: is the datastore pods to disks a many to one relationship? need to clarify with Portworx team>
+
 ## Create Azure AKS Infrastructure
 
 Before you can install Portworx on your Azure AKS cluster, you must first create and configure all of the Azure AKS infrustructure necessary to run Portworx.
@@ -32,15 +55,20 @@ On K8s, Portworx uses K8s persistent volumes to store data that lives beyond the
 
 You will need to generate a Portworx spec with the configuration specific to your Portworx installation and apply it to your AKS cluster using kubectl. The best way to do this is to use the [Portworx spec generator.](https://docs.portworx.com/portworx-install-with-kubernetes/cloud/azure/aks/2-deploy-px/#generate-the-specs) The following configuration options are recommended:
 
-`Built-in ETCD`
+#### Built-in ETCD
 This option uses the Portworx provided KVDB for the key/value database that Portworx needs to run. Using KVDB is the recommended option in Production by Portworx.
+
 <todo: add screenshot>
 
-`Consume Unused` storage option.
+#### Consume Unused storage option.
 This option will enable Portworx to find the Azure Managed Disks that are attached to the AKS nodepool VMs and use them for Portworx volumes.
 
-`Azure Kubernetes Service`
+<todo: add screenshot>
+
+#### Azure Kubernetes Service
 Finally, make sure you select the AKS option on the Customize tab to let Portworx know what orchestration cloud provider it is running on.
+
+<todo: add screenshot>
 
 An example Portworx Azure AKS spec can be found in [deployment/portworx-azure-spec.yaml](deployment/portworx-azure-spec.yaml)
 
@@ -68,7 +96,7 @@ kubectl get pods,svc -n kube-system
 
 You should see a number of Portworx pods and services, hopefully all going into the Ready state.
 
-To check the health of the Portworx application, run:
+To check the health of the Portworx application and the storage pool, run:
 
 ```
 PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[0].metadata.name}')
