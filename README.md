@@ -37,7 +37,7 @@ https://docs.microsoft.com/en-us/azure/aks/azure-disks-dynamic-pv
 
 Before you can install Portworx on your Azure AKS cluster, you must first create and configure all of the Azure AKS infrustructure necessary to run Portworx.
 
-Steps to create and prepare Azure infrastructure for AKS and Portworx. [createAzureInfrastructure.sh](deployment/createAzureInfrastructure.sh) is a bash shell scripts that provides all of the Azure CLI and kubectl commands necessary to complete the steps below.
+Steps to create and prepare Azure infrastructure for AKS and Portworx. [createAzureInfrastructure.sh](deploy/createAzureInfrastructure.sh) is a bash shell scripts that provides all of the Azure CLI and kubectl commands necessary to complete the steps below.
 
 1. Create an Azure Resource Group for the AKS cluster
 2. Create an Azure Active Directory Service Principal for authentication in the AKS cluster and its infrastructure dependencies
@@ -70,7 +70,7 @@ Finally, make sure you select the AKS option on the Customize tab to let Portwor
 
 <todo: add screenshot>
 
-An example Portworx Azure AKS spec can be found in [deployment/portworx-azure-spec.yaml](deployment/portworx-azure-spec.yaml)
+An example Portworx Azure AKS spec can be found in [deploy/portworx-azure-spec.yaml](deploy/portworx-azure-spec.yaml)
 
 ### KVDB
 
@@ -81,7 +81,7 @@ I wanted to call out the Portworx provided ETCD solution, KVDB explicitly. There
 Now that we have everything setup and ready to go, installing Portworx is pretty easy. Just run the following kubectl command after you've generated your Portworx AKS spec:
 
 ```
-kubectl apply -f deployment/portworx-azure-spec.yaml
+kubectl apply -f deploy/portworx-azure-spec.yaml
 ```
 
 ### Check the health of Portworx on AKS
@@ -107,7 +107,7 @@ PX_POD=$(kubectl get pods -l name=portworx -n kube-system -o jsonpath='{.items[0
 
 If you run into issues with your Portworx installation, the following debugging and troubleshooting tips may help.
 
-**Super Important** If you need to make changes to your Portworx spec, Azure infrastructure, etc. make sure to run the following command to uninstall Portworx. `kubectl delete -f deployment/portworx-azure-spec.yaml` **does not** clean up all Portworx configuration resources from the initial installation attempt and can cause your troublshooing changes not to take effect.
+**Super Important** If you need to make changes to your Portworx spec, Azure infrastructure, etc. make sure to run the following command to uninstall Portworx. `kubectl delete -f deploy/portworx-azure-spec.yaml` **does not** clean up all Portworx configuration resources from the initial installation attempt and can cause your troublshooing changes not to take effect.
 
 Make sure you run the following to uninstall Portworx if you make spec or infrastructure changes. [More information can be found here.](https://docs.portworx.com/portworx-install-with-kubernetes/operate-and-maintain-on-kubernetes/uninstall/uninstall/#delete-wipe-px-cluster-configuration)
 
@@ -136,7 +136,7 @@ curl -fsL https://install.portworx.com/px-wipe | bash
 - Make sure that the appropriate storage class has been deployed to the AKS cluster for your Azure Disk type
 - kubectl get sc
 - *If the storage class does not exist on the AKS cluster*, edit azure-storage-class.yaml and apply the Azure storage class to the AKS cluster
-- kubectl apply -f deployment/azure-storage-class.yaml
+- kubectl apply -f deploy/azure-storage-class.yaml
 - To ssh into a VM, set the SSH keys, create a jumbox k8s pod, exec into the pod and SSH from there
 https://docs.microsoft.com/en-us/azure/aks/ssh
 ```
